@@ -4,3 +4,6 @@
 [submodule "owasp-zap"]
 	path = owasp-zap
 	url = https://repo1.dso.mil/dsop/opensource/owasp-zap/owasp-zap.git
+[submodule "zaproxy-github"]
+	path = zaproxy-github
+	url = https://github.com/zaproxy/zaproxy.git
