@@ -1,0 +1,6 @@
+[submodule "owasp-zap-stable"]
+	path = owasp-zap-stable
+	url = https://repo1.dso.mil/dsop/opensource/owasp-zap/owasp-zap-stable.git
+[submodule "owasp-zap"]
+	path = owasp-zap
+	url = https://repo1.dso.mil/dsop/opensource/owasp-zap/owasp-zap.git
