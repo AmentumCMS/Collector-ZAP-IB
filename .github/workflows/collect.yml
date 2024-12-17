@@ -166,7 +166,7 @@ jobs:
           echo -e "\nDownloading binaries"
           mkdir -p $DEST
           echo -e "\nDownloading Latest to $DEST"
-          gh release download -p "*" -D $DEST -R $REPO
+          gh release download -p "*[Lw]in*" -D $DEST -R $REPO
           echo -e "\nDownloaded to $DEST"
           echo -e "\Calculating Hashes"
           cd $DEST
