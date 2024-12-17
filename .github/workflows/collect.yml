@@ -172,7 +172,7 @@ jobs:
           cd $DEST
           sha256sum * | tee binaries.sha
           echo -e "\nFiles in $DEST"
-          ls -Alht $DEST
+          ls -Alht
 
       - name: Make ISO
         run: |
