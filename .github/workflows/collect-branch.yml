@@ -8,7 +8,7 @@ on:
 
 jobs:
   Date:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       Date: ${{ steps.date.outputs.date }}
     steps:
@@ -23,7 +23,7 @@ jobs:
 
   Skopeo:
     needs: [Date]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -88,7 +88,7 @@ jobs:
 
   Code:
     needs: [Date]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -127,7 +127,7 @@ jobs:
           if-no-files-found: error 
 
   MakeISO:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [Date, Code, Skopeo]
     env:
       GH_TOKEN: ${{ github.token }}
@@ -157,12 +157,13 @@ jobs:
           gh release list -R $REPO
           echo -e "\nDownloading Latest binaries to $DEST"
           mkdir -p $DEST
-          gh release download -p "*" -D $DEST -R $REPO
+          gh release download -D $DEST -R $REPO \
+            -p "*windows.exe" \
+            -p "*Linux.tar.gz" \
+            -p "*.zip"
           echo -e "Calculating Hashes"
           cd $DEST
           sha256sum * | tee binaries.sha
-          echo -e "\nFiles in $DEST"
-          ls -Alht
 
       - name: Show Artifacts
         run: ls -Alht *
@@ -212,7 +213,7 @@ jobs:
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
 
   Release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [Date, MakeISO]
     permissions:
       contents: write
@@ -230,7 +231,7 @@ jobs:
         run: ls -Alh ${{ vars.COLLECTOR }}-*.*
 
   Sharepoint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [Date, MakeISO]
     permissions:
       contents: write
