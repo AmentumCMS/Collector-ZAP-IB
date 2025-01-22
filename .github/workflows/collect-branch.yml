@@ -72,18 +72,21 @@ jobs:
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz
+          if-no-files-found: error
 
       - name: Upload TARchive SHA
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz.sha
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz.sha
+          if-no-files-found: error
 
       - name: Upload TARchive ToC
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz.txt
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz.txt
+          if-no-files-found: error
 
   Code:
     needs: [Date]
