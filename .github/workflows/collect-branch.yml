@@ -119,9 +119,9 @@ jobs:
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle
-          if-no-files-found: error 
-
-      - name: Upload bundle sha
+          if-no-files-found: error
+      
+      - name: Upload bundle hash
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle.sha
@@ -151,10 +151,13 @@ jobs:
           merge-multiple: true
           path: ${{ vars.COLLECTOR }}
 
+      - name: Show Artifacts
+        run: ls -Alh ${{ vars.COLLECTOR }}/*
+
       - name: Download latest Binaries
         run: |
           export REPO="zaproxy/zaproxy"
-          export DEST="binaries"
+          export DEST="${{ vars.COLLECTOR }}/binaries"
           echo -e "\nWorking with github repo $REPO"
           echo -e "Listing releases"
           gh release list -R $REPO
@@ -164,24 +167,6 @@ jobs:
             -p "*windows.exe" \
             -p "*Linux.tar.gz" \
             -p "*.zip"
-          echo -e "Calculating Hashes"
-          cd $DEST
-          sha256sum * | tee binaries.sha
-
-      - name: Show Artifacts
-        run: ls -Alh ${{ vars.COLLECTOR }}/*
-
-      - name: Download Binaries
-        run: |
-          export REPO="zaproxy/zaproxy"
-          export DEST="${{ vars.COLLECTOR }}/binaries"
-          echo -e "\nWorking with github repo $REPO"
-          echo -e "Listing releases"
-          gh release list -R $REPO
-          echo -e "\n\nDownloading binaries"
-          mkdir -p $DEST
-          echo -e "\nDownloading Latest to $DEST"
-          gh release download -p "*[Lw]in*" -D $DEST -R $REPO
           echo -e "\nDownloaded to $DEST"
           echo -e "\nCalculating Hashes"
           cd $DEST
@@ -245,7 +230,7 @@ jobs:
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso
           if-no-files-found: error
 
-      - name: Upload ISO SHA
+      - name: Upload ISO Hash
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
