@@ -119,9 +119,9 @@ jobs:
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle
-          if-no-files-found: error
-      
-      - name: Upload bundle hash
+          if-no-files-found: error 
+
+      - name: Upload bundle sha
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle.sha
@@ -150,6 +150,23 @@ jobs:
         with:
           merge-multiple: true
           path: ${{ vars.COLLECTOR }}
+
+      - name: Download latest Binaries
+        run: |
+          export REPO="zaproxy/zaproxy"
+          export DEST="binaries"
+          echo -e "\nWorking with github repo $REPO"
+          echo -e "Listing releases"
+          gh release list -R $REPO
+          echo -e "\nDownloading Latest binaries to $DEST"
+          mkdir -p $DEST
+          gh release download -D $DEST -R $REPO \
+            -p "*windows.exe" \
+            -p "*Linux.tar.gz" \
+            -p "*.zip"
+          echo -e "Calculating Hashes"
+          cd $DEST
+          sha256sum * | tee binaries.sha
 
       - name: Show Artifacts
         run: ls -Alh ${{ vars.COLLECTOR }}/*
@@ -228,7 +245,7 @@ jobs:
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso
           if-no-files-found: error
 
-      - name: Upload ISO Hash
+      - name: Upload ISO SHA
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha

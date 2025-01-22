@@ -156,17 +156,19 @@ jobs:
       - name: Show Artifacts
         run: ls -Alh ${{ vars.COLLECTOR }}/*
 
-      - name: Download Binaries
+      - name: Download latest Binaries
         run: |
           export REPO="zaproxy/zaproxy"
           export DEST="${{ vars.COLLECTOR }}/binaries"
           echo -e "\nWorking with github repo $REPO"
           echo -e "Listing releases"
           gh release list -R $REPO
-          echo -e "\n\nDownloading binaries"
+          echo -e "\nDownloading Latest binaries to $DEST"
           mkdir -p $DEST
-          echo -e "\nDownloading Latest to $DEST"
-          gh release download -p "*[Lw]in*" -D $DEST -R $REPO
+          gh release download -D $DEST -R $REPO \
+            -p "*windows.exe" \
+            -p "*Linux.tar.gz" \
+            -p "*.zip"
           echo -e "\nDownloaded to $DEST"
           echo -e "\nCalculating Hashes"
           cd $DEST
@@ -202,6 +204,18 @@ jobs:
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
           path: ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
+          if-no-files-found: error
+
+      - name: ISO Table of contents
+        run: |
+          tree -a ${{ vars.COLLECTOR }} \
+            | tee ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
+
+      - name: Upload iso ToC artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
+          path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
           if-no-files-found: error
 
       - name: Make ISO
