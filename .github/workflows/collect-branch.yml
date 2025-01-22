@@ -146,9 +146,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           merge-multiple: true
+          path: ${{ vars.COLLECTOR }}
 
       - name: Show Artifacts
-        run: ls -Alh ${{ vars.COLLECTOR }}-*.*
+        run: ls -Alh ${{ vars.COLLECTOR }}/*
 
       - name: Download Binaries
         run: |
