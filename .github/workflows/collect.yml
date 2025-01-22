@@ -180,13 +180,14 @@ jobs:
         run: |
           cd ${{ vars.COLLECTOR }}
           sha256sum -b *.* | tee \
-          ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
+          ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
 
       - name: Upload Artifact Hash File
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
           path: ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
+          if-no-files-found: error
 
       - name: ISO Table of contents
         run: |
@@ -231,6 +232,7 @@ jobs:
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
+          if-no-files-found: error
 
   Release:
     runs-on: ubuntu-24.04
