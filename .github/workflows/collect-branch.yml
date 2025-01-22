@@ -50,10 +50,8 @@ jobs:
 
       - name: Directory Contents
         run: |
-          echo "Directory Contents"
-          ls -lAhS *
-          echo -e "\nDirectory Size"
-          du -hd1 
+          echo -e "Directory Contents\n$(ls -lAhS *)"
+          echo -e "\n\nDirectory Size\n$(du -hd1)"
 
       - name: TARchive Skopeo Output
         run: |
@@ -171,26 +169,27 @@ jobs:
           echo -e "\nWorking with github repo $REPO"
           echo -e "Listing releases"
           gh release list -R $REPO
-          echo -e "\nDownloading binaries"
+          echo -e "\n\nDownloading binaries"
           mkdir -p $DEST
           echo -e "\nDownloading Latest to $DEST"
           gh release download -p "*[Lw]in*" -D $DEST -R $REPO
           echo -e "\nDownloaded to $DEST"
-          echo -e "\Calculating Hashes"
+          echo -e "\nCalculating Hashes"
           cd $DEST
           sha256sum * | tee binaries.sha
-          echo -e "\nFiles in $DEST\n$(ls -Alht)"
+          echo -e "\n\nFiles in $DEST\n$(ls -Alht)"
 
       - name: Copy Markdowns to ${{ vars.COLLECTOR }} ISO
         run: cp -v *.md ${{ vars.COLLECTOR }}/
 
-      - name: Show Artifacts
-        run: ls -Alh ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-*.*
+      - name: Show Artifacts in ISO
+        run: ls -Alh ${{ vars.COLLECTOR }}/*
 
       - name: Generate Artifact Hash File
         run: |
-          sha256sum -b ${{ vars.COLLECTOR }}/*.* | tee \
-          ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
+          cd  ${{ vars.COLLECTOR }}
+          sha256sum -b/*.* | tee \
+            ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
 
       - name: Upload Artifact Hash File
         uses: actions/upload-artifact@v4
