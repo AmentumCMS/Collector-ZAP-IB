@@ -152,18 +152,6 @@ jobs:
       - name: Show Artifacts
         run: ls -Alh ${{ vars.COLLECTOR }}-*.*
 
-      - name: Generate Artifact Hash File
-        run: |
-          sha256sum -b ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}* | tee \
-            ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
-          
-
-      - name: Upload Artifact Hash File
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
-          path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
-
       - name: Download Binaries
         run: |
           export REPO="zaproxy/zaproxy"
@@ -189,9 +177,9 @@ jobs:
 
       - name: Generate Artifact Hash File
         run: |
-          cd  ${{ vars.COLLECTOR }}
-          sha256sum -b/*.* | tee \
-            ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
+          cd ${{ vars.COLLECTOR }}
+          sha256sum -b *.* | tee \
+          ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
 
       - name: Upload Artifact Hash File
         uses: actions/upload-artifact@v4
@@ -204,7 +192,7 @@ jobs:
           tree -a ${{ vars.COLLECTOR }} \
             | tee ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
 
-      - name: Upload iso ToC artifact
+      - name: Upload ISO ToC artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
