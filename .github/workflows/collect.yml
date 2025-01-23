@@ -109,7 +109,7 @@ jobs:
       - name: Bundle Repo1 code base for ${{ vars.COLLECTOR }}
         run: |
           git bundle create --progress ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle --all
-          echo -e "\nDirectory Listing $(ls -Alht *)"
+          echo -e "\nDirectory Listing\n$(ls -Alht *)"
 
       - name: Generate Hash
         run: |
@@ -122,13 +122,13 @@ jobs:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle
           if-no-files-found: error
-      
+
       - name: Upload bundle hash
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle.sha
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle.sha
-          if-no-files-found: error 
+          if-no-files-found: error
 
   MakeISO:
     runs-on: ubuntu-24.04
@@ -196,7 +196,7 @@ jobs:
 
       - name: ISO Table of contents
         run: |
-          tree -a ${{ vars.COLLECTOR }} \
+          tree ${{ vars.COLLECTOR }} \
             | tee ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
 
       - name: Upload ISO ToC artifact
@@ -219,8 +219,8 @@ jobs:
 
       - name: Generate ISO Hash
         run: |
-          sha256sum -b ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso | tee \
-            ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
+          sha256sum -b ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso \
+          | tee ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
 
       - name: Show ISO & Hash
         run: ls -Alh *.iso*
