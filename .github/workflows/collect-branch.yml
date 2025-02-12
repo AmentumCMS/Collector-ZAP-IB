@@ -152,11 +152,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           merge-multiple: true
-          path: ${{ vars.COLLECTOR }}
+          path: ISO
 
-      - name: Show Artifacts
-        run: ls -Alht ${{ vars.COLLECTOR }}/*
+      - name: Copy Markdowns to ISO
+        run: cp -v *.md ISO/
 
+      # Download latest binaries
       - name: Download latest Binaries
         run: |
           export REPO="zaproxy/zaproxy"
@@ -175,56 +176,54 @@ jobs:
           cd $DEST
           sha256sum * | tee binaries.sha
           echo -e "\n\nFiles in $DEST\n$(ls -Alht)"
+      
+      # Download latest binaries
 
-      - name: Copy Markdowns to ${{ vars.COLLECTOR }} ISO
-        run: cp -v *.md ${{ vars.COLLECTOR }}/
-
-      - name: Show Artifacts in ISO
-        run: ls -Alht ${{ vars.COLLECTOR }}/*
+      - name: Show Artifacts
+        run: ls -1sSh ISO/*
 
       - name: Generate Artifact Hash File
         run: |
-          cd ${{ vars.COLLECTOR }}
-          sha256sum -b *.* | tee \
-            ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
+          sha256sum -b ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}* | tee \
+            ISO/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
 
       - name: Upload Artifact Hash File
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
-          path: ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
+          path: ISO/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
           if-no-files-found: error
 
       - name: ISO Table of contents
         run: |
-          tree ${{ vars.COLLECTOR }} \
-            | tee ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
+          tree ISO \
+            | tee ISO/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
 
       - name: Upload ISO ToC artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
-          path: ${{ vars.COLLECTOR }}/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
+          path: ISO/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
           if-no-files-found: error
 
       - name: Make ISO
         run: |
-          mkisofs -J -R -v -T -l \
+          mkisofs -r -v -l \
             -V '${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}' \
             -A '${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}' \
             -o ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso \
-            ${{ vars.COLLECTOR }}
+            ISO
 
       - name: Implant MD5 sum into iso
         run: implantisomd5 ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso
 
       - name: Generate ISO Hash
         run: |
-          sha256sum -b ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso \
-          | tee ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
+          sha256sum -b ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso | tee \
+            ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
 
       - name: Show ISO & Hash
-        run: ls -Alht *.iso*
+        run: ls -sS1h *.iso*
 
       - name: Upload ISO
         uses: actions/upload-artifact@v4
