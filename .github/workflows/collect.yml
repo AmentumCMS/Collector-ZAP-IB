@@ -302,7 +302,7 @@ jobs:
 
       # Upload to Sharepoint
       - name: Send Files to Sharepoint
-        uses: amentumcms/sharepoint-file-upload-action@pappasjfed-patch-1
+        uses: amentumcms/sharepoint-file-upload-action@main
         with:
           file_path: "${{ vars.COLLECTOR }}-*.*"
           host_name: ${{ secrets.SHAREPOINT_HOST }}
