@@ -285,31 +285,3 @@ jobs:
           files: |
             ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}*.*
 
-  Sharepoint:
-    runs-on: ubuntu-24.04
-    needs: [Date, MakeISO]
-    permissions:
-      contents: write
-      pull-requests: read
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v8
-        with:
-          merge-multiple: true
-
-      - name: Show Artifacts
-        run: ls -Alht ${{ vars.COLLECTOR }}-*.*
-
-      # Upload to Sharepoint
-      - name: Send Files to Sharepoint
-        uses: amentumcms/sharepoint-file-upload-action@main
-        with:
-          file_path: "${{ vars.COLLECTOR }}-*.*"
-          host_name: ${{ secrets.SHAREPOINT_HOST }}
-          site_name: ${{ secrets.SHAREPOINT_SITE }}
-          upload_path: '${{ secrets.SHAREPOINT_BASEPATH }}/${{ vars.COLLECTOR }}/${{ needs.Date.outputs.Date }}'
-          tenant_id: ${{ secrets.SHAREPOINT_TENANT_ID }}
-          client_id: ${{ secrets.SHAREPOINT_APP_ID }}
-          client_secret: ${{ secrets.SHAREPOINT_APP_SECRET }}
-          login_endpoint: 'login.microsoftonline.us'
-          graph_endpoint: 'graph.microsoft.us'
