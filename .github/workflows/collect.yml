@@ -30,7 +30,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Skopeo
         run: |
@@ -70,21 +70,21 @@ jobs:
         run: ls -Alht ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz*
 
       - name: Upload TARchive
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz
           if-no-files-found: error
 
       - name: Upload TARchive SHA
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz.sha
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz.sha
           if-no-files-found: error
 
       - name: Upload TARchive ToC
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz.txt
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.tgz.txt
@@ -95,7 +95,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: true
           lfs: true
@@ -120,14 +120,14 @@ jobs:
             ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle.sha
 
       - name: Upload bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle
           if-no-files-found: error
 
       - name: Upload bundle hash
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle.sha
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.bundle.sha
@@ -143,7 +143,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install mkisofs
         run: |
@@ -151,7 +151,7 @@ jobs:
           sudo apt-get install -y mkisofs isomd5sum wget
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
           path: ISO
@@ -191,7 +191,7 @@ jobs:
             ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
 
       - name: Upload Artifact Hash File
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
           path: ISO/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.sha
@@ -203,7 +203,7 @@ jobs:
             | tee ISO/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
 
       - name: Upload ISO ToC artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
           path: ISO/${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.txt
@@ -229,14 +229,14 @@ jobs:
         run: ls -sS1h *.iso*
 
       - name: Upload ISO
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso
           if-no-files-found: error
 
       - name: Upload ISO Hash
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
           path: ${{ vars.COLLECTOR }}-${{ needs.Date.outputs.Date }}.iso.sha
@@ -250,10 +250,10 @@ jobs:
       pull-requests: read
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 
@@ -277,7 +277,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: ${{ vars.COLLECTOR }} ${{ needs.Date.outputs.Date }}
           tag_name: ${{ needs.Date.outputs.Date }}
@@ -293,7 +293,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 
